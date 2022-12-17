@@ -27,7 +27,9 @@ func Run() error {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 	go func() {
-		internal.UpdateCurrency(store)
+		if err := internal.UpdateCurrency(cfg.CurrencyApiKey, store); err != nil {
+			signals <- os.Interrupt
+		}
 	}()
 
 	<-signals
