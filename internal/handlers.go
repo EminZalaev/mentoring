@@ -80,8 +80,8 @@ func writeError(ctx *fiber.Ctx, msg string, statusCode int) {
 }
 
 func setStatusSuccess(ctx *fiber.Ctx) {
-	status := status{"success"}
-	response, err := json.Marshal(status)
+	sts := responseStatus{"success"}
+	response, err := json.Marshal(sts)
 	if err != nil {
 		writeError(ctx, "internal error", http.StatusInternalServerError)
 		return

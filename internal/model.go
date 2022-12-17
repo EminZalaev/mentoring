@@ -11,6 +11,6 @@ type currencyGetResponse struct {
 	CurrencyTo   string `json:"currencyTo"`
 }
 
-type status struct {
-	status string `json:"status"`
+type responseStatus struct {
+	Status string `json:"status"`
 }
