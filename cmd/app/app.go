@@ -1,34 +1,47 @@
 package app
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"fmt"
 	"log"
-	"mentoring/internal"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"mentoring/internal"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func Run() error {
 	cfg, err := internal.InitConfig()
 	if err != nil {
-		return err
+		return fmt.Errorf("error init config: %w", err)
 	}
+
 	app := fiber.New()
+
 	store, err := internal.NewStorage(cfg)
 	if err != nil {
-		return err
+		return fmt.Errorf("error storage: %w", err)
 	}
+
 	srv := internal.NewService(store, app)
+	log.Println("server start on port:", cfg.Port)
 	srv.InitRoutes()
 	if err := app.Listen(":" + cfg.Port); err != nil {
-		return err
+		return fmt.Errorf("error listen server: %w", err)
 	}
+
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
+
 	go func() {
-		if err := internal.UpdateCurrency(cfg.CurrencyApiKey, store); err != nil {
-			signals <- os.Interrupt
+		ticker := time.NewTicker(1 * time.Hour)
+		for range ticker.C {
+			if err := internal.UpdateCurrency(cfg.CurrencyApiKey, store); err != nil {
+				log.Println("error update currencies: %w", err)
+			}
 		}
 	}()
 

@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -18,24 +19,24 @@ const (
 func UpdateCurrency(apiKey string, s Store) error {
 	curr, err := s.GetCurrency()
 	if err != nil {
-		return err
+		return fmt.Errorf("error get currencyRequest from storage: %w", err)
 	}
 
 	uri := buildReqUrl(apiKey, curr)
 
 	resp, err := http.Get(uri)
 	if err != nil {
-		return err
+		return fmt.Errorf("error get request from currencyRequest api: %w", err)
 	}
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("error read response body from currencyRequest api: %w", err)
 	}
 
 	defer func() {
 		if ferr := resp.Body.Close(); err != nil && err == ferr {
-			log.Println(err)
+			log.Println("error close resp body from currencyRequest api: %w", err)
 		}
 	}()
 
@@ -47,26 +48,29 @@ func UpdateCurrency(apiKey string, s Store) error {
 		pair = append(pair, el.CurrencyTo...)
 
 		index := strings.IndexAny(string(respBody), string(pair))
-
-		currStr := strings.Split(strings.Split(strResp[index-1:], ",")[0], "\"")[3]
+		cutCurr := strings.Split(strings.Split(strResp[index-1:], ",")[0], "\"")
+		if len(cutCurr) < 2 {
+			return fmt.Errorf("error value from currencyRequest api")
+		}
+		currStr := cutCurr[3]
 
 		currFloat, err := strconv.ParseFloat(currStr, 64)
 		if err != nil {
-			return err
+			return fmt.Errorf("error parse float value from currencyRequest api: %w", err)
 		}
 
-		if err := s.PostCurrency(&currency{
+		if err := s.PutCurrency(&currencyRequest{
 			CurrencyFrom: el.CurrencyFrom,
 			CurrencyTo:   el.CurrencyTo,
-			Value:        strconv.Itoa(int(currFloat)),
+			Value:        int(currFloat),
 		}); err != nil {
-			return err
+			return fmt.Errorf("error put currencyRequest to storage: %w", err)
 		}
 	}
 	return nil
 }
 
-func buildReqUrl(apiKey string, curr *[]currency) string {
+func buildReqUrl(apiKey string, curr *[]currencyGetResponse) string {
 	uri := url.URL{}
 
 	currPairs := make([]byte, 0)

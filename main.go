@@ -1,7 +1,8 @@
-package mentoring
+package main
 
 import (
 	"log"
+
 	"mentoring/cmd/app"
 )
 

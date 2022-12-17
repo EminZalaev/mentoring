@@ -1,7 +1,12 @@
 package internal
 
-type currency struct {
+type currencyRequest struct {
 	CurrencyFrom string `json:"currencyFrom"`
 	CurrencyTo   string `json:"currencyTo"`
-	Value        string `json:"value"`
+	Value        int    `json:"value"`
+}
+
+type currencyGetResponse struct {
+	CurrencyFrom string `json:"currencyFrom"`
+	CurrencyTo   string `json:"currencyTo"`
 }
