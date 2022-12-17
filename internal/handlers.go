@@ -41,6 +41,8 @@ func postCurrency(s Store) fiber.Handler {
 			return err
 		}
 
+		setStatusSuccess(ctx)
+
 		return nil
 	}
 }
@@ -60,6 +62,8 @@ func putCurrency(s Store) fiber.Handler {
 			return err
 		}
 
+		setStatusSuccess(ctx)
+
 		return nil
 	}
 }
@@ -73,4 +77,14 @@ func writeCors(ctx *fiber.Ctx) {
 func writeError(ctx *fiber.Ctx, msg string, statusCode int) {
 	ctx.Request().SetBodyString(msg)
 	ctx.Status(statusCode)
+}
+
+func setStatusSuccess(ctx *fiber.Ctx) {
+	status := status{"success"}
+	response, err := json.Marshal(status)
+	if err != nil {
+		writeError(ctx, "internal error", http.StatusInternalServerError)
+		return
+	}
+	ctx.Response().SetBody(response)
 }

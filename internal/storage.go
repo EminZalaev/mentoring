@@ -68,7 +68,7 @@ func (store *Storage) GetCurrency() (*[]currencyGetResponse, error) {
 func (store *Storage) PostCurrency(crc *currencyRequest) error {
 	updatedTime := time.Now()
 	time.Parse("2006-01-02 15:04:05-07", updatedTime.String())
-	_, err := store.DB.Exec("insert into currency (currencyfrom, currencyto, well,updated_at) values ($1,$2,$3)",
+	_, err := store.DB.Exec("insert into currency (currencyfrom, currencyto, well,updated_at) values ($1,$2,$3,$4)",
 		crc.CurrencyFrom,
 		crc.CurrencyTo,
 		crc.Value,

@@ -13,7 +13,6 @@ type Service struct {
 }
 
 func NewService(store Store, app *fiber.App) *Service {
-
 	return &Service{
 		Store: store,
 		app:   app,
