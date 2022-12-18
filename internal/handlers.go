@@ -13,13 +13,13 @@ func getCurrency(s Store) fiber.Handler {
 		currency, err := s.GetCurrency()
 		if err != nil {
 			writeError(ctx, "internal error", http.StatusInternalServerError)
-			return err
+			return nil
 		}
 
 		body, err := json.Marshal(currency)
 		if err != nil {
 			writeError(ctx, "internal error", http.StatusInternalServerError)
-			return err
+			return nil
 		}
 
 		ctx.Response().SetBody(body)
@@ -33,13 +33,13 @@ func postCurrency(s Store) fiber.Handler {
 		currency := &currencyRequest{}
 		if err := json.Unmarshal(ctx.Request().Body(), &currency); err != nil {
 			writeError(ctx, "wrong json", http.StatusBadRequest)
-			return err
+			return nil
 		}
 
 		err := s.PostCurrency(currency)
 		if err != nil {
 			writeError(ctx, "internal error", http.StatusInternalServerError)
-			return err
+			return nil
 		}
 
 		setStatusSuccess(ctx)
@@ -54,13 +54,13 @@ func putCurrency(s Store) fiber.Handler {
 		currency := &currencyRequest{}
 		if err := json.Unmarshal(ctx.Request().Body(), &currency); err != nil {
 			writeError(ctx, "wrong json", http.StatusBadRequest)
-			return err
+			return nil
 		}
 
 		err := s.PutCurrency(currency)
 		if err != nil {
 			writeError(ctx, "internal error", http.StatusInternalServerError)
-			return err
+			return nil
 		}
 
 		setStatusSuccess(ctx)
@@ -76,7 +76,7 @@ func writeCors(ctx *fiber.Ctx) {
 }
 
 func writeError(ctx *fiber.Ctx, msg string, statusCode int) {
-	ctx.Request().SetBodyString(msg)
+	ctx.Response().SetBodyString(msg)
 	ctx.Status(statusCode)
 }
 
