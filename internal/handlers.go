@@ -2,8 +2,9 @@ package internal
 
 import (
 	"encoding/json"
-	"github.com/gofiber/fiber/v2"
 	"net/http"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func getCurrency(s Store) fiber.Handler {

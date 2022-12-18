@@ -2,15 +2,13 @@ package app
 
 import (
 	"fmt"
+	"github.com/gofiber/fiber/v2"
 	"log"
+	"mentoring/internal"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-
-	"mentoring/internal"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 func Run() error {
@@ -28,6 +26,15 @@ func Run() error {
 
 	srv := internal.NewService(store, app)
 	log.Println("server start on port:", cfg.Port)
+
+	go func() {
+		time.Sleep(1 * time.Minute)
+		if err := internal.UpdateCurrency(cfg.CurrencyApiKey, store); err != nil {
+			log.Println("error update currencies: %w", err)
+		}
+
+	}()
+
 	srv.InitRoutes()
 	if err := app.Listen(":" + cfg.Port); err != nil {
 		return fmt.Errorf("error listen server: %w", err)
@@ -35,15 +42,6 @@ func Run() error {
 
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
-
-	go func() {
-		ticker := time.NewTicker(1 * time.Hour)
-		for range ticker.C {
-			if err := internal.UpdateCurrency(cfg.CurrencyApiKey, store); err != nil {
-				log.Println("error update currencies: %w", err)
-			}
-		}
-	}()
 
 	<-signals
 	log.Println("Terminating...")
