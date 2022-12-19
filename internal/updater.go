@@ -47,22 +47,21 @@ func UpdateCurrency(apiKey string, s Store) error {
 		pair = append(pair, el.CurrencyFrom...)
 		pair = append(pair, el.CurrencyTo...)
 
-		index := strings.IndexAny(string(respBody), string(pair))
+		index := strings.Index(string(respBody), string(pair))
 		cutCurr := strings.Split(strings.Split(strResp[index-1:], ",")[0], "\"")
 		if len(cutCurr) < 2 {
 			return fmt.Errorf("error value from currencyRequest api")
 		}
 		currStr := cutCurr[3]
-
 		currFloat, err := strconv.ParseFloat(currStr, 64)
 		if err != nil {
 			return fmt.Errorf("error parse float value from currencyRequest api: %w", err)
 		}
 
-		if err := s.PutCurrency(&currencyRequest{
+		if err := s.PutCurrency(&currency{
 			CurrencyFrom: el.CurrencyFrom,
 			CurrencyTo:   el.CurrencyTo,
-			Value:        int(currFloat),
+			Well:         currFloat,
 		}); err != nil {
 			return fmt.Errorf("error put currencyRequest to storage: %w", err)
 		}

@@ -1,9 +1,10 @@
 package internal
 
-type currencyRequest struct {
+type currency struct {
 	CurrencyFrom string `json:"currencyFrom"`
 	CurrencyTo   string `json:"currencyTo"`
 	Value        int    `json:"value"`
+	Well         float64
 }
 
 type currencyGetResponse struct {

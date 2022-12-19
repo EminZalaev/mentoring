@@ -28,11 +28,12 @@ func Run() error {
 	log.Println("server start on port:", cfg.Port)
 
 	go func() {
-		time.Sleep(1 * time.Minute)
-		if err := internal.UpdateCurrency(cfg.CurrencyApiKey, store); err != nil {
-			log.Println("error update currencies: %w", err)
+		ticker := time.NewTicker(1 * time.Hour)
+		for range ticker.C {
+			if err := internal.UpdateCurrency(cfg.CurrencyApiKey, store); err != nil {
+				log.Println("error update currencies: %w", err)
+			}
 		}
-
 	}()
 
 	srv.InitRoutes()

@@ -2,6 +2,6 @@ CREATE TABLE IF NOT EXISTS currency
 (
    currencyfrom text,
    currencyto text,
-   well int default 0,
+   well float default 0.0,
    updated_at timestamp without time zone
 )

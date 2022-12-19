@@ -10,8 +10,8 @@ import (
 
 type Store interface {
 	GetCurrency() (*[]currencyGetResponse, error)
-	PostCurrency(crc *currencyRequest) error
-	PutCurrency(crc *currencyRequest) error
+	PostCurrency(crc *currency) error
+	PutCurrency(crc *currency) error
 }
 
 type Storage struct {
@@ -65,13 +65,14 @@ func (store *Storage) GetCurrency() (*[]currencyGetResponse, error) {
 	return &result, nil
 }
 
-func (store *Storage) PostCurrency(crc *currencyRequest) error {
+func (store *Storage) PostCurrency(crc *currency) error {
 	updatedTime := time.Now()
 	time.Parse("2006-01-02 15:04:05-07", updatedTime.String())
+	well := float64(crc.Value)
 	_, err := store.DB.Exec("insert into currency (currencyfrom, currencyto, well,updated_at) values ($1,$2,$3,$4)",
 		crc.CurrencyFrom,
 		crc.CurrencyTo,
-		crc.Value,
+		well,
 		updatedTime)
 	if err != nil {
 		return err
@@ -80,13 +81,17 @@ func (store *Storage) PostCurrency(crc *currencyRequest) error {
 	return nil
 }
 
-func (store *Storage) PutCurrency(crc *currencyRequest) error {
+func (store *Storage) PutCurrency(crc *currency) error {
 	updatedTime := time.Now()
 	time.Parse("2006-01-02 15:04:05-07", updatedTime.String())
+	well := float64(crc.Value)
+	if crc.Value == 0 {
+		well = crc.Well
+	}
 	_, err := store.DB.Exec("update currency set currencyfrom=$1, currencyto=$2, well = $3,updated_at=$4 where currencyfrom=$1 and currencyto=$2",
 		crc.CurrencyFrom,
 		crc.CurrencyTo,
-		crc.Value,
+		well,
 		updatedTime)
 	if err != nil {
 		return err

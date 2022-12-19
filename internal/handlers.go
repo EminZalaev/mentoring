@@ -30,7 +30,7 @@ func getCurrency(s Store) fiber.Handler {
 func postCurrency(s Store) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		writeCors(ctx)
-		currency := &currencyRequest{}
+		currency := &currency{}
 		if err := json.Unmarshal(ctx.Request().Body(), &currency); err != nil {
 			writeError(ctx, "wrong json", http.StatusBadRequest)
 			return nil
@@ -51,7 +51,7 @@ func postCurrency(s Store) fiber.Handler {
 func putCurrency(s Store) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		writeCors(ctx)
-		currency := &currencyRequest{}
+		currency := &currency{}
 		if err := json.Unmarshal(ctx.Request().Body(), &currency); err != nil {
 			writeError(ctx, "wrong json", http.StatusBadRequest)
 			return nil
