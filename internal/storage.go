@@ -3,6 +3,7 @@ package internal
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -35,9 +36,8 @@ func initStorage(cfg *Config) (*sql.DB, error) {
 		cfg.DBPassword,
 		cfg.DBHost,
 		cfg.DBPort,
-		cfg.DBName,
-	)
-
+		cfg.DBName)
+	log.Println(dataSource)
 	db, err := sql.Open("postgres", dataSource)
 	if err != nil {
 		return nil, err
