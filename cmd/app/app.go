@@ -2,13 +2,15 @@ package app
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"log"
-	"mentoring/internal"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"mentoring/internal"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func Run() error {
@@ -37,9 +39,11 @@ func Run() error {
 	}()
 
 	srv.InitRoutes()
-	if err := app.Listen(":" + cfg.Port); err != nil {
-		return fmt.Errorf("error listen server: %w", err)
-	}
+	go func() {
+		if err := app.Listen(":" + cfg.Port); err != nil {
+			panic(err)
+		}
+	}()
 
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)

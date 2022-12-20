@@ -14,8 +14,9 @@ type Service struct {
 
 func NewService(store Store, app *fiber.App) *Service {
 	return &Service{
-		Store: store,
-		app:   app,
+		stopChan: make(chan struct{}),
+		Store:    store,
+		app:      app,
 	}
 }
 
