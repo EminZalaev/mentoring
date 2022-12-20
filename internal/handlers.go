@@ -2,6 +2,7 @@ package internal
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,12 +14,14 @@ func getCurrency(s Store) fiber.Handler {
 		currency, err := s.GetCurrency()
 		if err != nil {
 			writeError(ctx, "internal error", http.StatusInternalServerError)
+			log.Println(err)
 			return nil
 		}
 
 		body, err := json.Marshal(currency)
 		if err != nil {
 			writeError(ctx, "internal error", http.StatusInternalServerError)
+			log.Println(err)
 			return nil
 		}
 
@@ -33,12 +36,14 @@ func postCurrency(s Store) fiber.Handler {
 		currency := &currency{}
 		if err := json.Unmarshal(ctx.Request().Body(), &currency); err != nil {
 			writeError(ctx, "wrong json", http.StatusBadRequest)
+			log.Println(err)
 			return nil
 		}
 
 		err := s.PostCurrency(currency)
 		if err != nil {
 			writeError(ctx, "internal error", http.StatusInternalServerError)
+			log.Println(err)
 			return nil
 		}
 
@@ -54,12 +59,14 @@ func putCurrency(s Store) fiber.Handler {
 		currency := &currency{}
 		if err := json.Unmarshal(ctx.Request().Body(), &currency); err != nil {
 			writeError(ctx, "wrong json", http.StatusBadRequest)
+			log.Println(err)
 			return nil
 		}
 
 		err := s.PutCurrency(currency)
 		if err != nil {
 			writeError(ctx, "internal error", http.StatusInternalServerError)
+			log.Println(err)
 			return nil
 		}
 
@@ -85,6 +92,7 @@ func setStatusSuccess(ctx *fiber.Ctx) {
 	response, err := json.Marshal(sts)
 	if err != nil {
 		writeError(ctx, "internal error", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	ctx.Response().SetBody(response)

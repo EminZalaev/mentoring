@@ -3,7 +3,6 @@ package internal
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -37,7 +36,6 @@ func initStorage(cfg *Config) (*sql.DB, error) {
 		cfg.DBHost,
 		cfg.DBPort,
 		cfg.DBName)
-	log.Println(dataSource)
 	db, err := sql.Open("postgres", dataSource)
 	if err != nil {
 		return nil, err
@@ -75,7 +73,6 @@ func (store *Storage) GetCurrency() (*[]currencyGetResponse, error) {
 
 func (store *Storage) PostCurrency(crc *currency) error {
 	updatedTime := time.Now()
-	time.Parse("2006-01-02 15:04:05-07", updatedTime.String())
 	well := float64(crc.Value)
 	_, err := store.DB.Exec("insert into currency (currencyfrom, currencyto, well,updated_at) values ($1,$2,$3,$4)",
 		crc.CurrencyFrom,
@@ -91,7 +88,6 @@ func (store *Storage) PostCurrency(crc *currency) error {
 
 func (store *Storage) PutCurrency(crc *currency) error {
 	updatedTime := time.Now()
-	time.Parse("2006-01-02 15:04:05-07", updatedTime.String())
 	well := float64(crc.Value)
 	if crc.Value == 0 {
 		well = crc.Well

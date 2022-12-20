@@ -35,7 +35,7 @@ func Run() (err error) {
 	log.Println("server start on port:", cfg.Port)
 
 	go func() {
-		ticker := time.NewTicker(3 * time.Second)
+		ticker := time.NewTicker(1 * time.Hour)
 		for range ticker.C {
 			if err := internal.UpdateCurrency(cfg.CurrencyApiKey, store); err != nil {
 				log.Println(err)
