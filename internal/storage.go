@@ -46,6 +46,13 @@ func initStorage(cfg *Config) (*sql.DB, error) {
 	return db, err
 }
 
+func (store *Storage) CloseDBConnection() error {
+	if err := store.DB.Close(); err != nil {
+		return fmt.Errorf("error close database: %w", err)
+	}
+	return nil
+}
+
 func (store *Storage) GetCurrency() (*[]currencyGetResponse, error) {
 	result := make([]currencyGetResponse, 0)
 	rows, err := store.DB.Query("select currencyfrom, currencyto from currency")
@@ -61,6 +68,7 @@ func (store *Storage) GetCurrency() (*[]currencyGetResponse, error) {
 
 		result = append(result, curr)
 	}
+	defer rows.Close()
 
 	return &result, nil
 }
