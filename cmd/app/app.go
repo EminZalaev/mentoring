@@ -14,12 +14,12 @@ import (
 )
 
 func Run() (err error) {
+	app := fiber.New()
+
 	cfg, err := internal.InitConfig()
 	if err != nil {
 		return fmt.Errorf("error init config: %w", err)
 	}
-
-	app := fiber.New()
 
 	store, err := internal.NewStorage(cfg)
 	if err != nil {
